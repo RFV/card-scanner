@@ -1,0 +1,76 @@
+This libary uses uses opencv 3. Mine was installed with anaconda.
+
+There are two stages to detection.
+	The first stage is to prepare the image for the contour detection function. The 1st stage may be performed by either one of two methods (depending on the image). Each function also has its own set of tweaking parameters that you need to play with. You must also pass the parameters to the script input.
+		For images where the contrast is not high enough you may use the filter_image function.
+		Otherwise try the contrast_image > gel_image route.
+			This is also a 2 step process, and step 2 is optional. If the results from the contrast_image function has a few different parts (blobs), then you may put it into the merge_image_contours function.
+	The last stage is to put the prepared image through get_contours, which will output the contours only.
+
+All of the functions have ther own tweaking parameters.
+
+filter_image(image, canny1=75, canny2=200, height=False, show=False) -> returns a smaller image which is canny filtered
+
+	image 						the ORIGINAL image
+	canny1, canny2				tweaking parameters
+	height		 				if height is set the image will be resized before processing
+	show				 		since there are tweaking parameters it may be useful to call these functions with show on
+
+contrast_image(image, thresh1=180, thresh2=200, height=False, show=False) -> returns a smaller image which is contrast filtered
+
+	image 						the ORIGINAL image
+	thresh1, thresh2			tweaking parameters
+	height						if height is set the image will be resized before processing
+	show						since there are tweaking parameters it may be useful to call these functions with show on
+
+merge_image_contours(image, distance=50, show=False) -> returns a an image where large objects are merged
+
+	image 						the CONTRASTED image
+	distance					tweaking parameters (distance between objects to merge)
+	show						since there are tweaking parameters it may be useful to call these functions with show on
+
+get_contours(image, polydb=0.02, contour_range=5, show=False) -> returns a contours object (based on the smaller images)
+
+	image 						the image from either filter_image, contrast_image or merge_image_contours
+	polydb						tweaking parameter
+	contour_range				tweaking parameter
+	show						since there are tweaking parameters it may be useful to call these functions with show on
+
+def overlay(image, contours, show=False) -> returns a smaller image has the overlay on it
+
+	image 						the image from either filter_image, contrast_image or merge_image_contours
+	contours 					the contours object that was returned withget_contours function
+	show						since there are tweaking parameters it may be useful to call these functions with show on
+
+def cropped_image(image, contours, bw=True, show=False) -> returns a larger image which has the payload image
+
+	image 						the ORIGINAL (large) image
+	contours 					the contours object that was returned withget_contours function
+	show						since there are tweaking parameters it may be useful to call these functions with show on
+
+
+
+python scan.py -i WP_20160531_11_32_28_Rich_LI.jpg -o screen -f 5,5 -P 0.04
+	performs the filter with 5,5 as parameters. Then finds the edges with 0.04 parameter and exports payload to screen
+
+python scan.py -i WP_20160531_11_32_28_Rich_LI.jpg -o output.jpg -f 5,5 -P 0.04
+	performs the filter with 5,5 as parameters. Then finds the edges with 0.04 parameter and exports payload to output.jpg file
+
+python scan.py -i WP_20160531_11_32_28_Rich_LI.jpg -o screen -f 5,5
+	performs the filter with 5,5 as parameters. Then exports payload to screen
+
+python scan.py -i WP_20160531_11_33_24_Rich_LI.jpg -o screen -f 10,10
+	performs the filter with 10,10 as parameters. Then exports payload to screen
+
+python scan.py -i WP_20160531_11_33_24_Rich_LI.jpg -o screen -f 10,10 -p 0.03
+	performs the filter with 10,10 as parameters. Then finds the edges with 0.03 parameter and exports outline image to screen
+
+python scan.py -i WP_20160531_11_36_09_Rich_LI.jpg -o screen -c 180,200 -m 50 -p 0.03
+	performs the contrast with 180,200 as parameters. Then merges the images blobs with 50 as parameter Then finds the edges with 0.03 parameter and exports outline image to screen
+
+python scan.py -i WP_20160531_11_36_09_Rich_LI.jpg -o output2.jpg -c 180,200 -m 50 -P 0.03
+	performs the contrast with 180,200 as parameters. Then merges the images blobs with 50 as parameter Then finds the edges with 0.03 parameter and exports payload image to output2.jpg file
+
+python scan.py -i WP_20160531_11_38_57_Rich_LI.jpg -o screen -f 10,10 -p 0.03
+	performs the filter with 10,10 as parameters. Then finds the edges with 0.03 parameter and exports outline image to screen
+
